@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Multi Git Repo Manager</title>
+  <style>
+    :root {
+    --bg: #282828;
+    --bg-soft: #32302f;
+    --bg-hard: #1d2021;
+    --border: #504945;
+    --text: #ebdbb2;
+    --text-muted: #bdae93;
+
+    --blue: #83a598;
+    --green: #b8bb26;
+    --yellow: #fabd2f;
+    --red: #fb4934;
+    --purple: #d3869b;
+    }
+
+    /* ===== BASE ===== */
+    body {
+    font-family: "JetBrains Mono", Consolas, monospace;
+    background: var(--bg);
+    color: var(--text);
+    padding: 16px;
+    margin: 0;
+    }
+
+    h2 {
+    color: var(--yellow);
+    margin-bottom: 12px;
+    }
+
+    label {
+    color: var(--text-muted);
+    }
+
+    input[type="text"],
+    select {
+    background: var(--bg-soft);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 6px 8px;
+    border-radius: 6px;
+    max-width: 100%;
+    }
+
+    input[type="checkbox"] {
+    accent-color: var(--blue);
+    }
+
+    button {
+    background: var(--bg-soft);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    }
+
+    button:hover {
+    background: var(--blue);
+    color: var(--bg-hard);
+    }
+
+    /* ===== TABLE ===== */
+    table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+    background: var(--bg-soft);
+    border-radius: 10px;
+    overflow: hidden;
+    table-layout: fixed;
+    }
+
+    th {
+    background: #3c3836;
+    color: var(--yellow);
+    font-weight: bold;
+    padding: 10px;
+    border-bottom: 1px solid var(--border);
+    }
+
+    td {
+    padding: 10px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+    }
+
+    tr:hover td {
+    background: #3c3836;
+    }
+
+    /* ===== COLUMN WIDTH ===== */
+    th:nth-child(1),
+    td:nth-child(1) { width: 60px; text-align: center; }
+
+    th:nth-child(2),
+    td:nth-child(2) { width: 32%; }
+
+    th:nth-child(3),
+    td:nth-child(3) { width: 120px; text-align: center; }
+
+    th:nth-child(4),
+    td:nth-child(4) { width: 32%; }
+
+    th:nth-child(5),
+    td:nth-child(5) { width: 160px; }
+
+    /* ===== REPO PATH ===== */
+    td small {
+    color: var(--text-muted);
+    word-break: break-all;
+    }
+
+    /* ===== BRANCH TAG STYLE ===== */
+    .branch {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    }
+
+    .branch-current {
+    background: var(--blue);
+    color: var(--bg-hard);
+    }
+
+    .branch-develop {
+    background: var(--green);
+    color: var(--bg-hard);
+    }
+
+    .branch-feature {
+    background: var(--purple);
+    color: var(--bg-hard);
+    }
+
+    .branch-hotfix {
+    background: var(--red);
+    color: var(--bg-hard);
+    }
+
+    .branch-master {
+    background: var(--yellow);
+    color: var(--bg-hard);
+    }
+
+    /* ===== SELECT OPTION COLOR ===== */
+    select.branch-feature { border-color: var(--purple); }
+    select.branch-hotfix  { border-color: var(--red); }
+    select.branch-master  { border-color: var(--yellow); }
+    select.branch-develop { border-color: var(--green); }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1100px) {
+    th:nth-child(2), td:nth-child(2),
+    th:nth-child(4), td:nth-child(4) {
+        width: auto;
+    }
+
+    td:nth-child(5) {
+        font-size: 12px;
+    }
+    }
+
+    @media (max-width: 800px) {
+    table, thead, tbody, tr, td, th {
+        display: block;
+    }
+
+    thead {
+        display: none;
+    }
+
+    tr {
+        margin-bottom: 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 8px;
+    }
+
+    td {
+        border: none;
+        padding: 6px 4px;
+    }
+
+    td::before {
+        content: attr(data-label);
+        display: block;
+        color: var(--text-muted);
+        font-size: 11px;
+    }
+    }
+    /* ===== FIX COLUMN WIDTH ===== */
+    th:nth-child(3),
+    td:nth-child(3) {
+    width: 140px;
+    max-width: 140px;
+    text-align: center;
+    }
+
+    th:nth-child(4),
+    td:nth-child(4) {
+    width: 220px;
+    max-width: 220px;
+    }
+
+    th:nth-child(5),
+    td:nth-child(5) {
+    width: 180px;
+    text-align: left;
+    }
+
+    /* ===== TRUNCATE BRANCH TEXT ===== */
+    .branch,
+    .branch span {
+    display: inline-block;
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    }
+
+    /* target branch select */
+    select.target-branch {
+    width: 100%;
+    max-width: 100%;
+    }
+
+    select.target-branch option {
+    max-width: 100%;
+    }
+
+    /* ===== OPERATIONS ALIGN ===== */
+    td:nth-child(5) label {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    cursor: pointer;
+    }
+
+    td:nth-child(5) input[type="checkbox"] {
+    margin: 0;
+    }
+
+    /* ===== HOVER TOOLTIP (native) ===== */
+    .branch[title],
+    select[title] {
+    cursor: help;
+    }
+    /* ===== PRIMARY ACTION BUTTON ===== */
+    #run-btn {
+      background: #b8bb26;          /* Gruvbox green */
+      color: #1d2021;
+      border: 1px solid #98971a;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+
+    #run-btn:hover {
+      background: #a9b665;
+      color: #1d2021;
+    }
+
+    #run-btn:active {
+      transform: translateY(1px);
+    }
+
+    #run-btn:disabled {
+      background: #665c54;
+      border-color: #504945;
+      color: #bdae93;
+      cursor: not-allowed;
+    }
+
+    /* ===== SCAN BUTTON (ORANGE) ===== */
+    #scan-btn {
+      background: #fe8019;        /* Gruvbox orange */
+      color: #1d2021;
+      border: 1px solid #d65d0e;
+      font-weight: bold;
+    }
+
+    #scan-btn:hover {
+      background: #f28534;
+      color: #1d2021;
+    }
+
+    #scan-btn:active {
+      transform: translateY(1px);
+    }
+
+    #scan-btn:disabled {
+      background: #665c54;
+      border-color: #504945;
+      color: #bdae93;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <h2>Multi Git Repo Manager</h2>
+  <label>Root Path:</label>
+  <input id="path-input" type="text" style="width: 60%;">
+  <button id="browse-btn">Browse</button>
+  <button id="scan-btn">Scan Repos</button>
+  <br><br>
+  <button id="run-btn">RUN OPERATIONS ON SELECTED REPOS</button>
+  <table id="repo-table">
+    <thead>
+      <tr>
+        <th>Select</th>
+        <th>Folder</th>
+        <th>Current Branch</th>
+        <th>Target Branch</th>
+        <th>Operations</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <br>
+  <p id="status">Ready</p>
+
+  <script src="renderer.js"></script>
+  <script>
+    document.querySelectorAll("#repo-table tbody tr").forEach(tr => {
+        const currentCell = tr.children[2];
+        const currentBranch = currentCell.innerText.trim();
+
+        currentCell.innerHTML = `
+            <span class="branch branch-current ${classByBranch(currentBranch)}"
+                title="${currentBranch}">
+            ${currentBranch}
+            </span>
+        `;
+
+        const select = tr.querySelector("select.target-branch");
+        const selected = select.value;
+
+        select.classList.add(classByBranch(selected));
+        select.setAttribute("title", selected);
+    });
+
+    function classByBranch(name) {
+        if (name.startsWith("hotfix")) return "branch-hotfix";
+        if (name.startsWith("feature")) return "branch-feature";
+        if (name === "develop") return "branch-develop";
+        if (name === "master" || name === "production") return "branch-master";
+        return "";
+    }
+  </script>
+</body>
+</html>
