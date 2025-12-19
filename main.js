@@ -102,15 +102,16 @@ ipcMain.handle('scan-repos', async (event, rootPath) => {
 ipcMain.handle('checkout-branch', async (event, repoPath, branch) => {
   const repo = git(repoPath);
   try {
-    await repo.fetch();
-    if (branch in (await repo.branchLocal()).all) {
-      await repo.checkout(branch);
-    } else {
-      await repo.checkoutBranch(branch, `origin/${branch}`);
-    }
+    await repo.fetch('--prune');
+    await repo.checkout(branch);
     return { success: true };
   } catch (err) {
-    return { success: false, error: err.message };
+    try {
+      await repo.checkoutBranch(branch, `origin/${branch}`);
+      return { success: true };
+    } catch (err2) {
+      return { success: false, error: err2.message || err.message || 'Checkout failed' };
+    }
   }
 });
 
@@ -121,5 +122,15 @@ ipcMain.handle('pull-repo', async (event, repoPath) => {
     return { success: true };
   } catch (err) {
     return { success: false, error: err.message };
+  }
+});
+
+ipcMain.handle('refresh-current-branch', async (event, repoPath) => {
+  const repo = git(repoPath);
+  try {
+    const branchSummary = await repo.branch(['-a']);
+    return branchSummary.current || '(detached)';
+  } catch (err) {
+    return '(error)';
   }
 });

@@ -1,26 +1,29 @@
 {
-  "name": "git-manager",
+  "name": "multigitmanager",
   "version": "1.0.0",
+  "productName": "Multi Git Manager",
   "main": "main.js",
+  "build": {
+    "appId": "com.example.multigitmanager",
+    "productName": "Multi Git Manager",
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "artifactName": "MultiGitManager_Install_${version}.exe"
+    }
+  },
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
   "dependencies": {
     "simple-git": "^3.22.0"
   },
   "devDependencies": {
     "electron": "^28.1.0",
     "electron-builder": "^24.9.1"
-  },
-  "scripts": {
-    "start": "electron .",
-    "build": "electron-builder"
-  },
-  "build": {
-    "appId": "com.example.gitmanager",
-    "win": {
-      "target": "nsis"
-    },
-    "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true
-    }
   }
 }

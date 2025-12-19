@@ -4,7 +4,7 @@
   <title>Multi Git Repo Manager</title>
   <style>
     :root {
-    --bg: #282828;
+    --bg: #444141;
     --bg-soft: #32302f;
     --bg-hard: #1d2021;
     --border: #504945;
@@ -95,7 +95,7 @@
 
     /* ===== COLUMN WIDTH ===== */
     th:nth-child(1),
-    td:nth-child(1) { width: 60px; text-align: center; }
+    td:nth-child(1) { width: 30px; text-align: center; }
 
     th:nth-child(2),
     td:nth-child(2) { width: 32%; }
@@ -107,7 +107,7 @@
     td:nth-child(4) { width: 32%; }
 
     th:nth-child(5),
-    td:nth-child(5) { width: 160px; }
+    td:nth-child(5) { width: 100px; }
 
     /* ===== REPO PATH ===== */
     td small {
@@ -211,7 +211,7 @@
 
     th:nth-child(5),
     td:nth-child(5) {
-    width: 180px;
+    width: 100px;
     text-align: left;
     }
 
@@ -302,6 +302,27 @@
       color: #bdae93;
       cursor: not-allowed;
     }
+    /* ===== ACTION BAR ===== */
+    .action-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    #status {
+      margin: 0;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+    /* ===== BIGGER CHECKBOX (NATIVE) ===== */
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      transform: scale(1.25);
+      cursor: pointer;
+      accent-color: #83a598; /* Gruvbox blue */
+    }
   </style>
 </head>
 <body>
@@ -311,7 +332,10 @@
   <button id="browse-btn">Browse</button>
   <button id="scan-btn">Scan Repos</button>
   <br><br>
-  <button id="run-btn">RUN OPERATIONS ON SELECTED REPOS</button>
+  <div class="action-bar">
+    <button id="run-btn">RUN OPERATIONS ON SELECTED REPOS</button>
+    <p id="status">Ready</p>
+  </div>
   <table id="repo-table">
     <thead>
       <tr>
@@ -324,8 +348,6 @@
     </thead>
     <tbody></tbody>
   </table>
-  <br>
-  <p id="status">Ready</p>
 
   <script src="renderer.js"></script>
   <script>
