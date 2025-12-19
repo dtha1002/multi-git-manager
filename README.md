@@ -62,7 +62,8 @@ docker run --rm -ti \
   /bin/bash -c "npm install && npx electron-builder --win"
 ```
 
-Output files will be placed in the dist folder.
+Output files will be placed in the dist folder.  
+Run `./dist/win-unpacked/git-manager.exe` 
 
 ## Technologies Used
 - Electron.js
@@ -70,7 +71,8 @@ Output files will be placed in the dist folder.
 - Pure HTML/CSS/JavaScript (no heavy frameworks)
 
 ## Acknowledgments
-Thank you for using the app!
-If you find it helpful, please give it a ⭐ on GitHub ❤️
-Feel free to open an Issue or Pull Request for bugs, feature requests (e.g., auto-stash, repo status display, macOS build), or improvements.
+Thank you for using the app!  
+If you find it helpful, please give it a ⭐ on GitHub ❤️  
+Feel free to open an Issue or Pull Request for bugs, feature requests (e.g., auto-stash, repo status display, macOS build), or improvements.  
 Happy coding! 🚀
+
